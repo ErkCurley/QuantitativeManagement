@@ -5,7 +5,7 @@ output: pdf_document
 
 ```{r}
 # install.packages("lpSolveAPI")
-
+tinytex::install_tinytex()
 ```
 ```{r}
 library(lpSolveAPI)
