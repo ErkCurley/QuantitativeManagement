@@ -1,0 +1,84 @@
+---
+title: "Ecurley_6"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+#install.packages("lpSolveAPI")
+#tinytex::install_tinytex()
+```
+```{r}
+library(lpSolveAPI)
+```
+
+
+We start with an LP model that has 6 variables. One for each of the costs associated with shipping between warehouses and factories. Then we indicated the costs (I started with Plant A, Then Plant B)
+
+I added either 600 or 625 to each of the variables because that is the unit cost per item in Plant A and B Respectively
+
+Next I added 2 additional variables as dumby variables. This is because the total demand from the warehouses is 210, yet the total supply is 220. I have to add a dumby warehouse to account for the difference.
+
+I also set the cost of using this dumby variable to 0 since we don't know the shipping cost, only the production value.
+
+Finally we indiacte that the overall function is going to be a minimization of the cost.
+```{r}
+lprec <- make.lp(0,8)
+set.objfn(lprec, c(22+600, 14+600, 30+600, 0+600,
+                   16+625, 20+625, 24+625, 0+625))
+lp.control(lprec, sense='min')
+
+```
+
+Next I added two constraints. These constraints ensure that the production matches the production per plant.
+
+```{r}
+add.constraint(lprec, c(1,1,1,1,0,0,0,0), "=", 100)
+add.constraint(lprec, c(0,0,0,0,1,1,1,1), "=", 120)
+```
+
+Then I added 4 constraints to meet the demand from the warehouses.
+
+```{r}
+add.constraint(lprec, c(1,0,0,0,1,0,0,0), "=", 80)
+add.constraint(lprec, c(0,1,0,0,0,1,0,0), "=", 60)
+add.constraint(lprec, c(0,0,1,0,0,0,1,0), "=", 70)
+add.constraint(lprec, c(0,0,0,1,0,0,0,1), "=", 10)
+```
+
+Next I set the lower bound of all the constratints to 0
+
+```{r}
+set.bounds(lprec, lower = c(0,0,0,0,0,0,0,0), columns = c(1,2,3,4,5,6,7,8))
+```
+
+We can then set the names of the outputs
+```{r}
+Rownames <- c("Production Cap Plant A", "Production Cap Plant B", "Demand Warehouse 1", "Demand Warehouse 2", "Demand Warehouse 3", "Demand Warehouse 4")
+
+ColNames <- c("PlantA->W1", "PlantA->W2", "PlantA->W3", "PlantA->W4",
+              "PlantB->W1", "PlantB->W2", "PlantB->W3", "PlantB->W4")
+
+dimnames(lprec) <- list(Rownames, ColNames)
+```
+
+```{r}
+lprec
+solve(lprec)
+
+```
+
+We can see that the minimum cost to ship is 138,980 and the number of items to be shipped to each warehouse.
+
+Starting from Left to Right 
+Plant A will ship 30, 60, 0, & 10 items to Warehouses 1-4 respectively.
+Plant B will ship 50, 0, 70, & 0  items to Warehosues 1-4 respectively.
+
+Since Warehouse 4 doesn't exist we will not be shipping those 10 items from PlantA
+
+```{r}
+get.objective(lprec)
+get.variables(lprec)
+```
+
