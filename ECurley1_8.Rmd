@@ -1,0 +1,82 @@
+---
+title: "Ecurley1_Assignment 8"
+output: pdf_document
+---
+
+```{r}
+#install.packages("Benchmarking")
+library(Benchmarking)
+```
+
+```{r}
+x <- matrix(c(150,400,320,520,350,320,.2,.7,1.2,2.0,1.2,.7),ncol = 2)
+y <- matrix(c(14000,14000,42000,28000,19000,14000,3500,21000,10500,42000,25000,15000),ncol = 2)
+colnames(y) <- c("3rd Party","Private")
+colnames(x) <- c("Staff Hours","Supplies")
+x
+y
+```
+```{r}
+e <- dea(x,y,RTS = "fdh")            # provide the input and output 
+e
+peers(e)                             # identify the peers
+lambda(e)
+```
+```{r}
+e <- dea(x,y,RTS = "crs")            # provide the input and output 
+e
+peers(e)                             # identify the peers
+lambda(e)
+```
+```{r}
+e <- dea(x,y,RTS = "vrs")            # provide the input and output 
+e
+peers(e)                             # identify the peers
+lambda(e)
+```
+
+```{r}
+e <- dea(x,y,RTS = "irs")            # provide the input and output 
+e
+peers(e)                             # identify the peers
+lambda(e)
+```
+```{r}
+e <- dea(x,y,RTS = "drs")            # provide the input and output 
+e
+peers(e)                             # identify the peers
+lambda(e)
+```
+```{r}
+e <- dea(x,y,RTS = "fdh+")            # provide the input and output 
+e
+peers(e)                             # identify the peers
+lambda(e)
+```
+
+
+```{r}
+x <- matrix(c(1,1,1,1,1,1,
+         1.0000,1.0000,1.0000,1.0000,0.9775,0.8675,
+         1.0000,1.0000,1.0000,1.0000,1.0000,0.8963,
+         1.0000,1.0000,1.0000,1.0000,1.0000,0.8963,
+         1.0000,1.0000,1.0000,1.0000,0.9775,0.8675,
+         1,1,1,1,1,1
+          ),ncol = 6)
+colnames(x) <- c("FDH","CRS","VRS","IRS","DRS","FRH/FDH+")
+x
+```
+
+We can see here that under the assumption of FDH and FHR all sites are preforming at peek efficiency
+However when we consider other methods such as CRS VRS IRS and DRS we see that site 5 & 6 perform under peek efficiency. 
+
+For example under CRS site 5 is %97.75 efficient, thus they should be able to improve their efficiency by mimicing the effort of their closest peers (Sites 1,2,&4)
+This same process can be applied to the other methods and peers.
+
+Under the assumption of CRS and DRS site 5 should mimic sites 1,2, & 4
+Under the assumption of CRS and DRS site 6 should mimic sites 1,2, & 4
+Under the assumption of VRS and IRS site 6 should mimic sites 1,2, & 5
+
+The weights as indicated by the lambdas will indicate how important each of those sites should be weighted.
+
+
