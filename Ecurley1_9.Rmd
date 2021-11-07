@@ -1,0 +1,50 @@
+---
+title: "Assignment9"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(lpSolveAPI)
+
+```
+
+The objective function would be:
+Maximize Z = P + -6y2p + -6y2m + -3y3p + -3y3m
+
+Where P = x1 + x2 + x3
+
+y2p - y2m = 6x1 + 4x2 + 5x3 - 50
+y3p - y3m = 8x1 + 7x2 + 5x3 - 75
+
+Thus:
+Maximize Z = x1 + x2 + x3 + -6y2p + -6y2m + -3y3p + -3y3m
+
+
+
+// Objective function
+min: y1p + y1m + 6 y2p + 6 y2m + 3 y3p + 3 y3m;
+
+// Constraints
+20 x1 + 15x2 + 25x3 + y1m - y1p >= 125;
+6x1 + 4x2 + 5x3 + y2m - y2p = 50;
+8x1 + 7x2 + 5x3 + y3m - y3p >= 75;
+
+```{r}
+gp_sl <- read.lp("assignment9.lp")
+gp_sl
+```
+
+```{r}
+solve(gp_sl)
+get.objective(gp_sl)
+get.variables(gp_sl)
+```
+
+The results of this model show that y1p, y1m, y2p, y2m , y3p, y3m, and x1 are all 0. x2 and x3 are 8.333 and 3.333 respectfully. Thus the secondary goals of employee retention and next year's earnings will not be met entirely.
+
+
+
